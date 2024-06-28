@@ -1,5 +1,26 @@
 import { GridBox, Button, ComboBox } from "std-widgets.slint";
-export component Recipe inherits Window {
+
+component ColorComboBox {
+    ComboBox {
+        model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+        current-value: "No Change";
+    }
+}
+
+component GammaComboBox {
+    ComboBox {
+        model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
+        current-value: "No Change";
+    }
+}
+component ResetButton {
+    Button { text: "Reset"; }    
+}
+
+export component AppWindow inherits Window {
+
+    property <string> name;
+
     GridBox {
         padding: 15px;
         spacing: 15px;
@@ -8,11 +29,8 @@ export component Recipe inherits Window {
                 text: "Input Color Space"; 
                 vertical-alignment: center;
                 }
-            ComboBox {
-				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-				current-value: "No Change";
-			}
-            Button { text: "Reset"; }
+            ColorComboBox{}
+            ResetButton {}
         }
 
         Row {
@@ -20,39 +38,30 @@ export component Recipe inherits Window {
                 text: "Input Gamma"; 
                 vertical-alignment: center;
                 }
-            ComboBox {
-				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-				current-value: "No Change";
-			}
-            Button { text: "Reset"; }
+            GammaComboBox {}
+            ResetButton {}
         }
         Row {
             Text { 
                 text: "Output Color Space"; 
                 vertical-alignment: center;
                 }
-            ComboBox {
-				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-				current-value: "No Change";
-			}
-            Button { text: "Reset"; }
+            ColorComboBox{}
+            ResetButton {}
         }
         Row {
             Text { 
                 text: "Output Gamma"; 
                 vertical-alignment: center;
                 }
-            ComboBox {
-				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-				current-value: "No Change";
-			}
-            Button { text: "Reset"; }
+            GammaComboBox {}
+            ResetButton {}
         }
         Row {
             Button {
                 text: "Swap";
                 col: 1;
-                colspan: 0;
+                colspan: 1;
                 primary: false;
             }
         }
@@ -60,8 +69,8 @@ export component Recipe inherits Window {
             Button {
                 text: "Export";
                 col: 1;
-                colspan: 0;
-                primary: false;
+                colspan: 1;
+                primary: true;
             }        
         }
     }
