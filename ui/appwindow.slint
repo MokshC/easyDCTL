@@ -1,0 +1,77 @@
+import { GridBox, Button, ComboBox } from "std-widgets.slint";
+
+component ColorComboBox {
+    ComboBox {
+        model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+        current-value: "No Change";
+    }
+}
+
+component GammaComboBox {
+    ComboBox {
+        model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
+        current-value: "No Change";
+    }
+}
+component ResetButton {
+    Button { text: "Reset"; }    
+}
+
+export component AppWindow inherits Window {
+
+    property <string> name;
+
+    GridBox {
+        padding: 15px;
+        spacing: 15px;
+        Row {
+            Text { 
+                text: "Input Color Space"; 
+                vertical-alignment: center;
+                }
+            ColorComboBox{}
+            ResetButton {}
+        }
+
+        Row {
+            Text { 
+                text: "Input Gamma"; 
+                vertical-alignment: center;
+                }
+            GammaComboBox {}
+            ResetButton {}
+        }
+        Row {
+            Text { 
+                text: "Output Color Space"; 
+                vertical-alignment: center;
+                }
+            ColorComboBox{}
+            ResetButton {}
+        }
+        Row {
+            Text { 
+                text: "Output Gamma"; 
+                vertical-alignment: center;
+                }
+            GammaComboBox {}
+            ResetButton {}
+        }
+        Row {
+            Button {
+                text: "Swap";
+                col: 1;
+                colspan: 1;
+                primary: false;
+            }
+        }
+        Row {
+            Button {
+                text: "Export";
+                col: 1;
+                colspan: 1;
+                primary: true;
+            }        
+        }
+    }
+}

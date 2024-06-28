@@ -1,0 +1,68 @@
+import { GridBox, Button, ComboBox } from "std-widgets.slint";
+export component Recipe inherits Window {
+    GridBox {
+        padding: 15px;
+        spacing: 15px;
+        Row {
+            Text { 
+                text: "Input Color Space"; 
+                vertical-alignment: center;
+                }
+            ComboBox {
+				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+				current-value: "No Change";
+			}
+            Button { text: "Reset"; }
+        }
+
+        Row {
+            Text { 
+                text: "Input Gamma"; 
+                vertical-alignment: center;
+                }
+            ComboBox {
+				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+				current-value: "No Change";
+			}
+            Button { text: "Reset"; }
+        }
+        Row {
+            Text { 
+                text: "Output Color Space"; 
+                vertical-alignment: center;
+                }
+            ComboBox {
+				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+				current-value: "No Change";
+			}
+            Button { text: "Reset"; }
+        }
+        Row {
+            Text { 
+                text: "Output Gamma"; 
+                vertical-alignment: center;
+                }
+            ComboBox {
+				model: ["No Change", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+				current-value: "No Change";
+			}
+            Button { text: "Reset"; }
+        }
+        Row {
+            Button {
+                text: "Swap";
+                col: 1;
+                colspan: 0;
+                primary: false;
+            }
+        }
+        Row {
+            Button {
+                text: "Export";
+                col: 1;
+                colspan: 0;
+                primary: false;
+            }        
+        }
+    }
+}
