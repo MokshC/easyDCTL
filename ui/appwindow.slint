@@ -1,5 +1,20 @@
 import { GridBox, Button, ComboBox } from "std-widgets.slint";
 
+component ColorComboBox {
+    ComboBox {
+        model: ["ACES (AP0)", "ARRI Wide Gamut 3", "REDWideGamutRGB", "Sony S-Gamut3.Cine"];
+    }
+}
+
+component GammaComboBox {
+    ComboBox {
+        model: ["ARRI LogC3", "Linear", "RED Log3G10", "Sony S-Log3"];
+    }
+}
+component ResetButton {
+    Button { text: "Reset"; }    
+}
+
 export component AppWindow inherits Window {
 
     property <string> name;
@@ -12,9 +27,7 @@ export component AppWindow inherits Window {
                 text: "Input Color Space"; 
                 vertical-alignment: center;
                 }
-            icsBox := ComboBox {
-                model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-            }
+            ColorComboBox{}
         }
 
         Row {
@@ -22,27 +35,21 @@ export component AppWindow inherits Window {
                 text: "Input Gamma"; 
                 vertical-alignment: center;
                 }
-            igBox := ComboBox {
-                model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
-            }
+            GammaComboBox {}
         }
         Row {
             Text { 
                 text: "Output Color Space"; 
                 vertical-alignment: center;
                 }
-            ocsBox := ComboBox {
-                model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-            }
+            ColorComboBox{}
         }
         Row {
             Text { 
                 text: "Output Gamma"; 
                 vertical-alignment: center;
                 }
-            ogBox := ComboBox {
-                model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
-            }
+            GammaComboBox {}
         }
         Row {
             Button {
@@ -57,9 +64,6 @@ export component AppWindow inherits Window {
                 colspan: 1;
                 primary: true;
             }
-        }
-        Row {
-        
         }
     }
 }

@@ -1,22 +1,5 @@
 import { GridBox, Button, ComboBox } from "std-widgets.slint";
 
-component ColorComboBox {
-    ComboBox {
-        model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
-        current-value: "No Change";
-    }
-}
-
-component GammaComboBox {
-    ComboBox {
-        model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
-        current-value: "No Change";
-    }
-}
-component ResetButton {
-    Button { text: "Reset"; }    
-}
-
 export component AppWindow inherits Window {
 
     property <string> name;
@@ -29,8 +12,9 @@ export component AppWindow inherits Window {
                 text: "Input Color Space"; 
                 vertical-alignment: center;
                 }
-            ColorComboBox{}
-            ResetButton {}
+            icsBox := ComboBox {
+                model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+            }
         }
 
         Row {
@@ -38,24 +22,27 @@ export component AppWindow inherits Window {
                 text: "Input Gamma"; 
                 vertical-alignment: center;
                 }
-            GammaComboBox {}
-            ResetButton {}
+            igBox := ComboBox {
+                model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
+            }
         }
         Row {
             Text { 
                 text: "Output Color Space"; 
                 vertical-alignment: center;
                 }
-            ColorComboBox{}
-            ResetButton {}
+            ocsBox := ComboBox {
+                model: ["ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "REDWideGamutRGB"];
+            }
         }
         Row {
             Text { 
                 text: "Output Gamma"; 
                 vertical-alignment: center;
                 }
-            GammaComboBox {}
-            ResetButton {}
+            ogBox := ComboBox {
+                model: ["ARRI LogC3", "Sony S-Log3", "RED Log3G10"];
+            }
         }
         Row {
             Button {
@@ -64,14 +51,15 @@ export component AppWindow inherits Window {
                 colspan: 1;
                 primary: false;
             }
-        }
-        Row {
             Button {
                 text: "Export";
-                col: 1;
+                col: 0;
                 colspan: 1;
                 primary: true;
-            }        
+            }
+        }
+        Row {
+        
         }
     }
 }
