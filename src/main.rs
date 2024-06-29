@@ -1,40 +1,60 @@
-use std::io;	// bring in input/output from std library
-use rand::Rng;	// brings in rng from rand lib
-use std::cmp::Ordering;	//brings in <, >, = comparisons
+#![warn(clippy::all, rust_2018_idioms)]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-fn main() {		// create main function
+// When compiling natively:
+#[cfg(not(target_arch = "wasm32"))]
+fn main() -> eframe::Result<()> {
+    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
 
-	// requesting input from user using print lines
-    println!("Guess the number!");
-    
-    let secret_number = rand::thread_rng().gen_range(1..=100); // gets rand num range 1-100    
+    let native_options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([400.0, 300.0])
+            .with_min_inner_size([300.0, 220.0])
+            .with_icon(
+                // NOTE: Adding an icon is optional
+                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..])
+                    .expect("Failed to load icon"),
+            ),
+        ..Default::default()
+    };
+    eframe::run_native(
+        "eframe template",
+        native_options,
+        Box::new(|cc| Box::new(easydctl::TemplateApp::new(cc))),
+    )
+}
 
-	loop {	// keeps looping until there is an error
-	
-	    println!("Please input your guess.");    
-    	let mut guess = String::new();	// creates mutable variable "guess" bound to "new()" which is an empty string
+// When compiling to web using trunk:
+#[cfg(target_arch = "wasm32")]
+fn main() {
+    // Redirect `log` message to `console.log` and friends:
+    eframe::WebLogger::init(log::LevelFilter::Debug).ok();
 
-		io::stdin()	// using the io imported earlier, we can read a line from user
-		    .read_line(&mut guess)	// this appends user input as mutable, the "&" shows this var was already created above and doesn't need to double up memory
-		    .expect("Failed to read line");	// handling potential error
-		// NOTE: the above could be written as one line, but it is ugly io::stdin().read_line(&mut guess).expect("Failed to read line");
+    let web_options = eframe::WebOptions::default();
 
-        let guess: u32 = match guess.trim().parse() {	// converts guess from string to number, if possible
-            Ok(num) => num,
-            Err(_) => continue,							// otherwise loop restarts
-        };
-
-		println!("You guessed: {guess}");	// {} are used to represent variables
-		println!("The secret number is: {secret_number}");
-		
-		// match outputs    
-		match guess.cmp(&secret_number) {
-		    Ordering::Less => println!("Too small!"),
-		    Ordering::Greater => println!("Too big!"),
-		    Ordering::Equal => {
-		    					println!("You win!"); 
-		    					break;
-		    }
-		}
-	}
+    wasm_bindgen_futures::spawn_local(async {
+        let start_result = eframe::WebRunner::new()
+            .start(
+                "the_canvas_id", // hardcode it
+                web_options,
+                Box::new(|cc| Box::new(easydctl::TemplateApp::new(cc))),
+            )
+            .await;
+        let loading_text = web_sys::window()
+            .and_then(|w| w.document())
+            .and_then(|d| d.get_element_by_id("loading_text"));
+        match start_result {
+            Ok(_) => {
+                loading_text.map(|e| e.remove());
+            }
+            Err(e) => {
+                loading_text.map(|e| {
+                    e.set_inner_html(
+                        "<p> The app has crashed. See the developer console for details. </p>",
+                    )
+                });
+                panic!("failed to start eframe: {e:?}");
+            }
+        }
+    });
 }
