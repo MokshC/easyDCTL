@@ -1,25 +1,27 @@
-#![warn(clippy::all, rust_2018_idioms)]
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
+use eframe::egui;
 
-// When compiling natively:
-#[cfg(not(target_arch = "wasm32"))]
-fn main() -> eframe::Result<()> {
-    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+fn main() {
+    let native_options = eframe::NativeOptions::default();
+    let _ = eframe::run_native("easyDCTL", native_options, Box::new(|cc| Box::new(MyEguiApp::new(cc))));
+}
 
-    let native_options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_inner_size([400.0, 300.0])
-            .with_min_inner_size([300.0, 220.0])
-            .with_icon(
-                // NOTE: Adding an icon is optional
-                eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon-256.png")[..])
-                    .expect("Failed to load icon"),
-            ),
-        ..Default::default()
-    };
-    eframe::run_native(
-        "eframe template",
-        native_options,
-        Box::new(|cc| Box::new(easydctl::TemplateApp::new(cc))),
-    )
+#[derive(Default)]
+struct MyEguiApp {}
+
+impl MyEguiApp {
+    fn new(_cc: &eframe::CreationContext<'_>) -> Self {
+        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
+        // Restore app state using cc.storage (requires the "persistence" feature).
+        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
+        // for e.g. egui::PaintCallback.
+        Self::default()
+    }
+}
+
+impl eframe::App for MyEguiApp {
+   fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+       egui::CentralPanel::default().show(ctx, |ui| {
+           ui.heading("Hello World!");
+       });
+   }
 }
