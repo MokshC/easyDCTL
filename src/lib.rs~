@@ -6,6 +6,13 @@ pub struct ColorProfile {
 	gamma: String,
 }
 
+// impl to display color profile when println! is used
+impl std::fmt::Display for ColorProfile {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "colorsapce: {}, gamma: {}", &self.colorspace, &self.gamma)
+    }
+}
+
 pub fn get_input() -> ColorProfile{
 
 	// prompt for user
@@ -28,7 +35,14 @@ pub fn get_input() -> ColorProfile{
 			.expect("Failed to read input color space");
 
 		let input: u8 = match input.trim().parse() {	// converts input from string to number, if possible
-			Ok(num) => num,
+			Ok(num) => {
+						if (num >= 0) & (num <= 3) {	// if number acceptable return it
+							num
+						} else {
+							println!("Please input a number listed above");	// if number not recognized restart loop
+							continue
+						}
+			},
 			Err(_) => {
 						println!("Please input a number");	// otherwise loop restarts
 						continue
@@ -38,54 +52,78 @@ pub fn get_input() -> ColorProfile{
 		break input;	// returns user input
 	};
 	
-	let new:u8 = input + 3;
-	println!("{}", new);
+	// go from input to string color space
+	let ics = match &input {
+		1 => {String::from("ARRI Wide Gamut 3")},
+		2 => {String::from("RED Wide Gamut RGB")},
+		3 => {String::from("Sony S-Gamut3.Cine")},
+		_ => {String::from("ACES AP0")},
+	};
 	
-	/*
-	
+
 	// creates recommended gamma
-	let mut rec = String::new();	// creates mutable variable empty string for recommended gamma
-	match ics {
-		1 => rec = String::from("ARRI LogC3"),
-		2 => rec = String::from("RED Log3G10"),
-		3 => rec = String::from("Sony S-Log3"),
-		other => rec = String::from("Linear"),
+	let rec = match &input {
+		1 => String::from("ARRI LogC3"),
+		2 => String::from("RED Log3G10"),
+		3 => String::from("Sony S-Log3"),
+		_ => String::from("Linear"),
 	};
 
 	// prompt for user
 	println!("
-		[Enter] {rec}\n
-		[0] Linear\n
-		[1] ARRI LogC3\n
-		[2] RED Log3G10\n
-		[3] Sony S-Log3\n
-		\n
-		What is your input gamma?
-	");
-	
-	let mut ig = String::new();	// creates mutable variable empty string for input gamma
-	
-	loop{
-		io::stdin()	// trying to read user input
-			.read_line(&mut ig)
-			.expect("Failed to read input gamma");
+		[Enter] {}
+		[0] Linear
+		[1] ARRI LogC3
+		[2] RED Log3G10
+		[3] Sony S-Log3
 
-		let ig: u8 = match ig.trim().parse() {	// converts input from string to number, if possible
-			Ok(num) => num,
+		What is your input gamma?
+	", &rec);
+	
+	let input = loop {
+		let mut input = String::new();
+		io::stdin()	// trying to read user input
+				.read_line(&mut input)
+				.expect("Failed to read input gamma");
+		
+		// if the user takes our suggestion, kill the loop and return u8 max
+		if input == String::from("\n") {
+			break u8::MAX;
+		}
+	
+		let input: u8 = match input.trim().parse() {	// converts input from string to number, if possible
+			Ok(num) => {
+						if (num >= 0) & (num <= 3) {	// if number acceptable return it
+							num
+						} else {
+							println!("Please input a number listed above");	// if number not recognized restart loop
+							continue
+						}
+			},
 			Err(_) => {
-						println!("You input {ig}, please input a number");	// otherwise loop restarts
+						println!("Please input a number");	// otherwise loop restarts
 						continue
 			},							
-		break;
 		};
-	}
-	
-	*/
-	
-	let result = ColorProfile {
-		colorspace: String::from("test colorspace"),
-		gamma: String::from("test gamma"),
+		
+		break input;	// returns user input
 	};
 	
+	// go from input to string gamma
+	let ig = match &input {
+		&u8::MAX => {rec},
+		1 => {String::from("ARRI LogC3")},
+		2 => {String::from("RED Log3G10")},
+		3 => {String::from("Sony S-Log3")},
+		_ => {String::from("Linear")},
+	};
+
+	
+	let result = ColorProfile {
+		colorspace: ics,
+		gamma: ig,
+	};
+	
+	println!("{result}");
 	result
 }	
