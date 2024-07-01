@@ -6,23 +6,6 @@ pub struct ColorProfile {
 	gamma: String,
 }
 
-/*
-impl ColorProfile{
-	fn new{
-		println!("
-			[1] ACES AP0\n
-			[2] ARRI Wide Gamut 3\n
-			[3] RED Wide Gamut RGB\n
-			[4] Sony S-Gamut3.Cine
-		");
-    	println!("What is your input color space?");
-    	let _ = io::stdin()	// using the io imported earlier, we can read a line from user
-		    .read_line(&mut ics);
-	}
-}
-*/
-
-
 pub fn get_input() -> ColorProfile{
 
 	// prompt for user
@@ -35,16 +18,16 @@ pub fn get_input() -> ColorProfile{
 		What is your input color space?
 	");
 	
-	let mut input = String::new();	// creates mutable variable empty string for input color space
-	let ics: u8;
-	
 	// loop incase there is an error
-	loop {
+	let input = loop {
+	
+		let mut input = String::new();	// creates mutable variable empty string for input color space
+		
 		io::stdin()	// trying to read user input
 			.read_line(&mut input)
 			.expect("Failed to read input color space");
 
-		let ics: u8 = match input.trim().parse() {	// converts input from string to number, if possible
+		let input: u8 = match input.trim().parse() {	// converts input from string to number, if possible
 			Ok(num) => num,
 			Err(_) => {
 						println!("Please input a number");	// otherwise loop restarts
@@ -52,10 +35,10 @@ pub fn get_input() -> ColorProfile{
 			},							
 		};
 		
-		break;
-	}
+		break input;	// returns user input
+	};
 	
-	let new = ics + 3;
+	let new:u8 = input + 3;
 	println!("{}", new);
 	
 	/*

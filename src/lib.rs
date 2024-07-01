@@ -18,15 +18,16 @@ pub fn get_input() -> ColorProfile{
 		What is your input color space?
 	");
 	
-	let mut input = String::new();	// creates mutable variable empty string for input color space
-	
 	// loop incase there is an error
-	let ics = loop {
+	let input = loop {
+	
+		let mut input = String::new();	// creates mutable variable empty string for input color space
+		
 		io::stdin()	// trying to read user input
 			.read_line(&mut input)
 			.expect("Failed to read input color space");
 
-		let ics: u8 = match input.trim().parse() {	// converts input from string to number, if possible
+		let input: u8 = match input.trim().parse() {	// converts input from string to number, if possible
 			Ok(num) => num,
 			Err(_) => {
 						println!("Please input a number");	// otherwise loop restarts
@@ -34,11 +35,10 @@ pub fn get_input() -> ColorProfile{
 			},							
 		};
 		
-		break ics;
-	}
+		break input;	// returns user input
+	};
 	
-	let new = ics + 3;
-	println!("{}", new);
+	
 	
 	/*
 	
