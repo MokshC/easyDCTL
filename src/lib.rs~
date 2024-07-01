@@ -1,22 +1,108 @@
-use eframe::egui;
+use std::io;	// bring in input/output from std library
 
-#[derive(Default)]
-pub struct MyEguiApp {}
-
-impl MyEguiApp {
-	pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
-		// Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
-		// Restore app state using cc.storage (requires the "persistence" feature).
-		// Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
-		// for e.g. egui::PaintCallback.
-		Self::default()
-	}
+// Easier way to hold color info
+pub struct ColorProfile {
+	colorspace: String,
+	gamma: String,
 }
 
-impl eframe::App for MyEguiApp {
-	fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-		egui::CentralPanel::default().show(ctx, |ui| {
-			ui.heading("Hello World!");		
-		});
+/*
+impl ColorProfile{
+	fn new{
+		println!("
+			[1] ACES AP0\n
+			[2] ARRI Wide Gamut 3\n
+			[3] RED Wide Gamut RGB\n
+			[4] Sony S-Gamut3.Cine
+		");
+    	println!("What is your input color space?");
+    	let _ = io::stdin()	// using the io imported earlier, we can read a line from user
+		    .read_line(&mut ics);
 	}
 }
+*/
+
+
+pub fn get_input() -> ColorProfile{
+
+	// prompt for user
+	println!("
+		[0] ACES AP0
+		[1] ARRI Wide Gamut 3
+		[2] RED Wide Gamut RGB
+		[3] Sony S-Gamut3.Cine
+
+		What is your input color space?
+	");
+	
+	let mut input = String::new();	// creates mutable variable empty string for input color space
+	let ics: u8;
+	
+	// loop incase there is an error
+	loop {
+		io::stdin()	// trying to read user input
+			.read_line(&mut input)
+			.expect("Failed to read input color space");
+
+		let ics: u8 = match input.trim().parse() {	// converts input from string to number, if possible
+			Ok(num) => num,
+			Err(_) => {
+						println!("Please input a number");	// otherwise loop restarts
+						continue
+			},							
+		};
+		
+		break;
+	}
+	
+	let new = ics + 3;
+	println!("{}", new);
+	
+	/*
+	
+	// creates recommended gamma
+	let mut rec = String::new();	// creates mutable variable empty string for recommended gamma
+	match ics {
+		1 => rec = String::from("ARRI LogC3"),
+		2 => rec = String::from("RED Log3G10"),
+		3 => rec = String::from("Sony S-Log3"),
+		other => rec = String::from("Linear"),
+	};
+
+	// prompt for user
+	println!("
+		[Enter] {rec}\n
+		[0] Linear\n
+		[1] ARRI LogC3\n
+		[2] RED Log3G10\n
+		[3] Sony S-Log3\n
+		\n
+		What is your input gamma?
+	");
+	
+	let mut ig = String::new();	// creates mutable variable empty string for input gamma
+	
+	loop{
+		io::stdin()	// trying to read user input
+			.read_line(&mut ig)
+			.expect("Failed to read input gamma");
+
+		let ig: u8 = match ig.trim().parse() {	// converts input from string to number, if possible
+			Ok(num) => num,
+			Err(_) => {
+						println!("You input {ig}, please input a number");	// otherwise loop restarts
+						continue
+			},							
+		break;
+		};
+	}
+	
+	*/
+	
+	let result = ColorProfile {
+		colorspace: String::from("test colorspace"),
+		gamma: String::from("test gamma"),
+	};
+	
+	result
+}	

@@ -1,6 +1,9 @@
-use easy_dctl::MyEguiApp;
+use std::io;
+use easy_dctl::ColorProfile;
 
 fn main() {
-    let native_options = eframe::NativeOptions::default();	// sets default options on eframe
-    let _ = eframe::run_native("easyDCTL", native_options, Box::new(|cc| Box::new(MyEguiApp::new(cc))));	// starts MyEguiApp from lib.rs
+
+	let input: ColorProfile = easy_dctl::get_input();
+	
 }
+
