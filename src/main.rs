@@ -1,5 +1,8 @@
 use easy_dctl::ColorProfile;
 use easy_dctl::get_name;
+use crate::builder::stringtest;
+
+pub mod builder;
 
 fn main() {
 
@@ -8,12 +11,13 @@ fn main() {
 	
 	println!("Input  || {input}\nOutput || {output}");			// print profiles for user
 	
-	let filename = get_name(&input, &output);
+	let filename = get_name(&input, &output);					// get filename based on color profiled
+	let directory = dirs::download_dir().unwrap();				// get downloads folder
+	let path = directory.join(filename);						// add filename to downloads folder path
 	
-	println!("{filename}");
+	println!("\nCreating {}", path.display());					// print for user
 	
-	// let directory = dirs::download_dir;			// brings in directory path of downloads folder
-	// let path = directory.join(filename);
+	create_file(path);
 	
 
 }

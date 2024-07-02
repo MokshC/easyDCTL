@@ -145,5 +145,5 @@ pub fn get_name(input: &ColorProfile, output: &ColorProfile) -> String {
 	let s1: String = input.filename();
 	let s2: String = output.filename();
 	
-	format!("{s1}_to_{s2}")
+	format!("{s1}_to_{s2}.dctl")
 }

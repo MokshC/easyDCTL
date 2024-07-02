@@ -1,0 +1,4 @@
+pub fn create_file(path: PathBuf) {
+    let my_str = include_str!("./assets/ACESAP0_to_SonySGamut3Cine.cs");
+    print!("{my_str}");
+}
