@@ -1,5 +1,6 @@
 use std::io;	// bring in input/output from std library
 
+
 // Easier way to hold color info
 pub struct ColorProfile {
 	colorspace: String,
@@ -9,21 +10,34 @@ pub struct ColorProfile {
 // impl to display color profile when println! is used
 impl std::fmt::Display for ColorProfile {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "colorsapce: {}, gamma: {}", &self.colorspace, &self.gamma)
+        write!(f, "Colorspace: {}, Gamma: {}", &self.colorspace, &self.gamma)
     }
 }
 
-pub fn get_input() -> ColorProfile{
+impl ColorProfile {
+	fn filename(&self) -> String {
+		let s1: String = self.colorspace.replace(" ", "").replace("-", "").replace(".", "");
+		let s2: String = self.gamma.replace(" ", "").replace("-", "").replace(".", "");
+		
+		format!("{s1}_{s2}")
+	}
+
+}
+
+// Creates ColorProfile struct based on user input
+// input: &str containing "input" or "output"
+// output: ColorProfile
+pub fn get_color(profile: &str) -> ColorProfile {
 
 	// prompt for user
 	println!("
-		[0] ACES AP0
-		[1] ARRI Wide Gamut 3
-		[2] RED Wide Gamut RGB
-		[3] Sony S-Gamut3.Cine
+[0] ACES AP0
+[1] ARRI Wide Gamut 3
+[2] RED Wide Gamut RGB
+[3] Sony S-Gamut3.Cine
 
-		What is your input color space?
-	");
+What is your {} color space?
+	", &profile);
 	
 	// loop incase there is an error
 	let input = loop {
@@ -32,11 +46,11 @@ pub fn get_input() -> ColorProfile{
 		
 		io::stdin()	// trying to read user input
 			.read_line(&mut input)
-			.expect("Failed to read input color space");
+			.expect("Failed to read color space");
 
 		let input: u8 = match input.trim().parse() {	// converts input from string to number, if possible
 			Ok(num) => {
-						if (num >= 0) & (num <= 3) {	// if number acceptable return it
+						if num <= 3 {	// if number acceptable return it
 							num
 						} else {
 							println!("Please input a number listed above");	// if number not recognized restart loop
@@ -71,20 +85,20 @@ pub fn get_input() -> ColorProfile{
 
 	// prompt for user
 	println!("
-		[Enter] {}
-		[0] Linear
-		[1] ARRI LogC3
-		[2] RED Log3G10
-		[3] Sony S-Log3
+[Enter] {}
+[0] Linear
+[1] ARRI LogC3
+[2] RED Log3G10
+[3] Sony S-Log3
 
-		What is your input gamma?
-	", &rec);
+What is your {} gamma?
+	", &rec, &profile);
 	
 	let input = loop {
 		let mut input = String::new();
 		io::stdin()	// trying to read user input
 				.read_line(&mut input)
-				.expect("Failed to read input gamma");
+				.expect("Failed to read gamma");
 		
 		// if the user takes our suggestion, kill the loop and return u8 max
 		if input == String::from("\n") {
@@ -93,7 +107,7 @@ pub fn get_input() -> ColorProfile{
 	
 		let input: u8 = match input.trim().parse() {	// converts input from string to number, if possible
 			Ok(num) => {
-						if (num >= 0) & (num <= 3) {	// if number acceptable return it
+						if num <= 3 {	// if number acceptable return it
 							num
 						} else {
 							println!("Please input a number listed above");	// if number not recognized restart loop
@@ -124,6 +138,12 @@ pub fn get_input() -> ColorProfile{
 		gamma: ig,
 	};
 	
-	println!("{result}");
 	result
-}	
+}
+
+pub fn get_name(input: &ColorProfile, output: &ColorProfile) -> String {
+	let s1: String = input.filename();
+	let s2: String = output.filename();
+	
+	format!("{s1}_to_{s2}")
+}
