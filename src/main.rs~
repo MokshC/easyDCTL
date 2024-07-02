@@ -1,6 +1,6 @@
 use easy_dctl::ColorProfile;
 use easy_dctl::get_name;
-use crate::builder::stringtest;
+use crate::builder::create_file;
 
 pub mod builder;
 
@@ -17,7 +17,7 @@ fn main() {
 	
 	println!("\nCreating {}", path.display());					// print for user
 	
-	stringtest();
+	create_file(path);
 	
 
 }

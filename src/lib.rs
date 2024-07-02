@@ -14,6 +14,7 @@ impl std::fmt::Display for ColorProfile {
     }
 }
 
+// gets filename formatted colorprofile
 impl ColorProfile {
 	fn filename(&self) -> String {
 		let s1: String = self.colorspace.replace(" ", "").replace("-", "").replace(".", "");
@@ -21,7 +22,6 @@ impl ColorProfile {
 		
 		format!("{s1}_{s2}")
 	}
-
 }
 
 // Creates ColorProfile struct based on user input

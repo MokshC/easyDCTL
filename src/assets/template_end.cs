@@ -1,9 +1,3 @@
-//
-//  This DCTL is made by easyDCTL
-//	https://github.com/MokshC/easydctl
-//
-
-
 __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
 {
 	
