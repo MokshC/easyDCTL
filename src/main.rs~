@@ -17,7 +17,7 @@ fn main() {
 	
 	println!("\nCreating {}", path.display());					// print for user
 	
-	create_file(path);
+	create_file(path, input, output);
 	
 
 }
