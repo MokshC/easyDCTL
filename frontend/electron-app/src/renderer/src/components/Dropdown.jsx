@@ -8,7 +8,7 @@ function ColorSpaceDropdown({ io, onChange }) {
                 <option value="1">ARRI Wide Gamut 3</option>
                 <option value="2">RED Wide Gamut RGB</option>
                 <option value="3">SONY S-Gamut3.Cine</option>
-                <option value="4">No Change (only for input)</option>
+                <option value="4">No Change</option>
             </select>
         )
     } else {
@@ -19,7 +19,6 @@ function ColorSpaceDropdown({ io, onChange }) {
                 <option value="1">ARRI Wide Gamut 3</option>
                 <option value="2">RED Wide Gamut RGB</option>
                 <option value="3">SONY S-Gamut3.Cine</option>
-                <option value="4">No Change (only for input)</option>
             </select>
         )
     }
@@ -35,7 +34,7 @@ function GammaDropdown({ io, onChange }) {
                 <option value="1">ARRI LogC3</option>
                 <option value="2">RED Log3G10</option>
                 <option value="3">SONY S-log3</option>
-                <option value="4">No Change (only for input)</option>
+                <option value="4">No Change</option>
             </select>
         )
     } else {
@@ -46,7 +45,6 @@ function GammaDropdown({ io, onChange }) {
                 <option value="1">ARRI LogC3</option>
                 <option value="2">RED Log3G10</option>
                 <option value="3">SONY S-log3</option>
-                <option value="4">No Change (only for input)</option>
             </select>
         )
     }

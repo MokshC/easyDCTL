@@ -35,10 +35,15 @@ function Form() {
         const initialInputGamma = inputGamma.value;
         const initialOutputGamma = outputGamma.value;
 
-        inputColorSpace.value = initialOutputColorSpace;
-        outputColorSpace.value = initialInputColorSpace;
-        inputGamma.value = initialOutputGamma;
-        outputGamma.value = initialInputGamma;
+        if (inputColorSpace.value != '4') { 
+            inputColorSpace.value = initialOutputColorSpace;
+            outputColorSpace.value = initialInputColorSpace;
+        };
+
+        if (inputGamma.value != '4') { 
+            inputGamma.value = initialOutputGamma;
+            outputGamma.value = initialInputGamma; 
+        };
     }
 
     const handleExport = (e) => {
