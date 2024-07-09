@@ -1,7 +1,10 @@
 import {ColorSpaceDropdown, GammaDropdown} from "./Dropdown"
 import '../assets/index.css'
+import { useState } from "react"
 
 function Form() {
+    const [dctlData, setDctlData] = useState('');
+
     const handleColorSpace = (e) => {
         const outputColorSpace = document.getElementById('output-color-space');
 
@@ -46,8 +49,39 @@ function Form() {
         };
     }
 
-    const handleExport = (e) => {
+    const generateRandomDCTL = () => {
+        const header = `__DEVICE__ void main(
+          float4 outColor : SV_Target,
+          float2 inCoord : VPOS)
+        {
+          float4 inColor = tex2D(Color, inCoord);
+        `;
+        const body = `  outColor = float4(
+          inColor.r * ${Math.random().toFixed(2)},
+          inColor.g * ${Math.random().toFixed(2)},
+          inColor.b * ${Math.random().toFixed(2)},
+          1.0);
+        }`;
+    
+        const randomDCTL = header + body;
+        setDctlData(randomDCTL);
+      };
+
+    const handleExport = async (e) => {
         e.preventDefault();
+
+        generateRandomDCTL();
+
+        try {
+            const result = await window.electronAPI.saveDCTLFile(dctlData);
+            if (result.success) {
+              alert('File saved successfully!');
+            } else {
+              alert('File save canceled.');
+            }
+          } catch (error) {
+            console.error('Error exporting file:', error);
+          }
     }
 
     return (
