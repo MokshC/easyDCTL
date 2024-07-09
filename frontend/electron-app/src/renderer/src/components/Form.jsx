@@ -3,17 +3,22 @@ import '../assets/index.css'
 
 function Form() {
     const handleColorSpace = (e) => {
+        const outputColorSpace = document.getElementById('output-color-space');
+
         if (e.target.value === "4") {
-            const outputColorSpace = document.getElementById('output-color-space');
             outputColorSpace.setAttribute("disabled", true);
+        } else {
+            outputColorSpace.removeAttribute("disabled");
         }
     }
 
     const handleGamma = (e) => {
+        const outputGamma = document.getElementById('output-gamma');
+
         if (e.target.value === "4") {
-            const outputGamma = document.getElementById('output-gamma');
-            console.log(outputGamma);
             outputGamma.setAttribute("disabled", true);
+        } else {
+            outputGamma.removeAttribute("disabled");
         }
     }
 
