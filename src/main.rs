@@ -15,6 +15,8 @@ fn main() {
 	let directory = dirs::download_dir().unwrap();				// get downloads folder
 	let path = directory.join(filename);						// add filename to downloads folder path
 	
+	println!("{}", &path.display());
+	
 	create_file(path, input, output);
 	
 

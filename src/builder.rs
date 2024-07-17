@@ -3,6 +3,142 @@ use std::io::Write;
 use std::path::PathBuf;
 use easy_dctl::ColorProfile;
 
+fn linear_to_sonyslog3() -> String {
+	String::from(
+"//
+//  Linear to Sony SLog3
+//
+__DEVICE__ float LinearToSlog3(float x)
+{
+    float result;
+    if ( x >= 0.01125000f)
+    {
+        result = (420.0f + _log10f((x + 0.01f) / (0.18f + 0.01f)) * 261.5f) / 1023.0f;
+    }
+    else
+    {
+        result = (x * (171.2102946929f - 95.0f) / 0.01125000f + 95.0f) / 1023.0f;
+    }
+    return result;
+}
+__DEVICE__ float3 LinToLog(float3 rgb)
+{
+	float3 result;
+
+    result.x = LinearToSlog3(rgb.x);
+    result.y = LinearToSlog3(rgb.y);
+    result.z = LinearToSlog3(rgb.z);
+    
+    return result;
+}"
+	)
+}
+
+fn acesap0_to_sonysgamut3cine() -> String {
+	String::from(
+"//
+//  ACES AP0 to Sony S-Gamut3.Cine
+//
+__DEVICE__ float3 AcesToColor(float3 rgb)
+{	
+    float3 result;
+    
+	result.x = rgb.x * 1.55546f + rgb.y * -0.393281f + rgb.z * -0.162178f;
+	result.y = rgb.x * 0.0090216f + rgb.y * 0.918557f + rgb.z * 0.0724214f;
+	result.z = rgb.x * 0.0442641f + rgb.y * 0.0118503f + rgb.z * 0.943886f;
+    
+    return result;
+}"
+	)
+}
+
+fn arrilogc3_to_linear() -> String {
+	String::from(
+"//
+//  ARRI LogC3 to Linear
+//
+__DEVICE__ float LogC3ToLinear(float p_X)
+{
+	const float midGraySignal = 0.01;
+	const float cut = 1.0 / 9.0;
+	const float slope = 3.9086503371;
+	const float offset =  -1.3885369913;
+	const float encOffset = 0.3855369987;
+	const float gain = 800.0 / 400.0;
+	const float encGain = 0.2471896383;
+	const float gray = 0.005;
+	const float nz = 0.0522722750;
+
+    float result = (p_X - encOffset) / encGain;
+    float ns = (result - offset) / slope;
+    if (ns > cut)
+    {
+        ns = _powf(10.0f, result);
+    }
+    ns = (ns - nz) * gray;
+    return ns * (0.18f * gain / midGraySignal);
+}
+__DEVICE__ float3 LogToLin(float3 rgb)
+{
+	float3 result;
+
+    result.x = LogC3ToLinear(rgb.x);
+    result.y = LogC3ToLinear(rgb.y);
+    result.z = LogC3ToLinear(rgb.z);
+    
+    return result;
+}"
+	)	
+}
+
+fn arriwidegamut3_to_acesap0() -> String {
+	String::from(
+"//
+//  ARRI WG 3 to ACES AP0
+//
+__DEVICE__ float3 ColorToAces(float3 rgb)
+{
+    float3 result;
+    
+	result.x = rgb.x * 6.8020600000000e-01 + rgb.y * 2.3613700000000e-01 + rgb.z * 8.3658000000000e-02;
+	result.y = rgb.x * 8.5415000000000e-02 + rgb.y * 1.0174710000000e+00 + rgb.z * -1.0288600000000e-01;
+	result.z = rgb.x * 2.0570000000000e-03 + rgb.y * -6.2563000000000e-02 + rgb.z * 1.0605060000000e+00;
+    
+    return result;
+}"
+	)
+}
+
+fn template_start() -> String {
+	String::from(
+"//
+//  This DCTL is made by easyDCTL
+//	https://github.com/MokshC/easydctl
+//"
+	)
+}
+
+
+fn template_end() -> String {
+	String::from(
+"__DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
+{
+	
+	float3 rgb = make_float3(p_R, p_G, p_B);
+	
+	float3 rgblin = LogToLin(rgb);
+	float3 rgbaces = ColorToAces(rgblin);
+	float3 rgbcolor = AcesToColor(rgbaces);
+	float3 rgblog = LinToLog(rgbcolor);
+	
+	float3 result = rgblog;
+
+    return result;
+}"
+	)
+}
+
+/*
 fn clean(dirty: String) -> String {
 	dirty.replace(" ", "").replace("-", "").replace(".", "")
 }
@@ -19,19 +155,37 @@ fn get_transform(input: ColorProfile, output: ColorProfile) {
 	let mut transform = include_str!(ig.as_str());
 
 }
-
+*/
 pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) {
 
 	println!("Creating DCTL");					// print for user
+	let file = File::create(path);				// creating DCTL
 
-    let bytes = include_bytes!("./assets/template_start.cs");
-    get_transform(input, output);
+    let start = template_start();
+    let end = template_end();
     
-    // println!("{new}");
+    let ig = match input.gamma.as_str() {
+    	"ARRI LogC3" => {arrilogc3_to_linear()},
+    	_ => {String::from("// Work in Progress")},
+    };
     
-	let file = File::create(path);
-	let _ = file.expect("Couldn't open file").write_all(bytes);
-	
-	
- 
+    let ics = match input.colorspace.as_str() {
+    	"ARRI Wide Gamut 3" => {arriwidegamut3_to_acesap0()},
+    	_ => {String::from("// Work in Progress")},
+    };
+    
+    let ocs = match output.colorspace.as_str() {
+    	"Sony S-Gamut3.Cine" => {acesap0_to_sonysgamut3cine()},
+    	_ => {String::from("// Work in Progress")},
+    };
+    
+    let og = match output.gamma.as_str() {
+    	"Sony S-Log3" => {linear_to_sonyslog3()},
+    	_ => {String::from("// Work in Progress")},
+    };
+    
+    let contents = format!("{start}\n\n{ig}\n\n{ics}\n\n{ocs}\n\n{og}\n\n\n{end}");
+    
+    write!(file.expect("Can't open file"), "{}", contents);
+    
 }

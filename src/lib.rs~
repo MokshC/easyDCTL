@@ -3,8 +3,8 @@ use std::io;	// bring in input/output from std library
 
 // Easier way to hold color info
 pub struct ColorProfile {
-	colorspace: String,
-	gamma: String,
+	pub colorspace: str,
+	pub gamma: str,
 }
 
 // impl to display color profile when println! is used
