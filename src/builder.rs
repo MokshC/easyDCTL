@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 use easy_dctl::ColorProfile;
+use std::error::Error;
 
 fn linear_to_sonyslog3() -> String {
 	String::from(
@@ -156,7 +157,7 @@ fn get_transform(input: ColorProfile, output: ColorProfile) {
 
 }
 */
-pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) {
+pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) -> Result <(), Box<dyn Error>> {
 
 	println!("Creating DCTL");					// print for user
 	let file = File::create(path);				// creating DCTL
@@ -186,6 +187,10 @@ pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) {
     
     let contents = format!("{start}\n\n{ig}\n\n{ics}\n\n{ocs}\n\n{og}\n\n\n{end}");
     
-    write!(file.expect("Can't open file"), "{}", contents);
+    write!(file.expect("Cannot open file"), "{}", contents)?;
+    
+    println!("Created!");
+    
+    Ok(())
     
 }

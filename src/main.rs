@@ -17,7 +17,7 @@ fn main() {
 	
 	println!("{}", &path.display());
 	
-	create_file(path, input, output);
+	let _ = create_file(path, input, output);
 	
 
 }

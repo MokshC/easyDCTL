@@ -131,7 +131,7 @@ fn template_end() -> String {
 	float3 rgbcolor = AcesToColor(rgbaces);
 	float3 rgblog = LinToLog(rgbcolor);
 	
-	float3 result = [replace];
+	float3 result = rgblog;
 
     return result;
 }"
@@ -156,7 +156,7 @@ fn get_transform(input: ColorProfile, output: ColorProfile) {
 
 }
 */
-pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) {
+pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) -> Result <(), Box<dyn Error>> {
 
 	println!("Creating DCTL");					// print for user
 	let file = File::create(path);				// creating DCTL
@@ -186,6 +186,10 @@ pub fn create_file(path: PathBuf, input: ColorProfile, output: ColorProfile) {
     
     let contents = format!("{start}\n\n{ig}\n\n{ics}\n\n{ocs}\n\n{og}\n\n\n{end}");
     
-    write!(file.expect("Can't open file"), "{}", contents);
+    write!(file.expect("Cannot open file"), "{}", contents)?;
+    
+    println!("Created!");
+    
+    Ok(())
     
 }
