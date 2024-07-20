@@ -19,29 +19,19 @@ fn main() -> glib::ExitCode {
 }
 
 // shortcut to create boxes either horizontally or vertically
-fn box_shortcut(orientation: gtk::Orientation, spacing: i32) -> gtk::Box {
+fn box_shortcut(orientation: gtk::Orientation, align: gtk::Align, spacing: i32) -> gtk::Box {
     // Set up box
     let gtk_box = Box::builder()
     	.margin_top(1)
         .margin_bottom(1)
-        .margin_start(spacing)
-        .margin_end(spacing)
+        .margin_start(12)
+        .margin_end(12)
         .spacing(spacing)
-        .halign(gtk::Align::Center)
+        .halign(align)
         .valign(gtk::Align::Center)
         .orientation(orientation)
         .build();
 	gtk_box
-}
-
-// shortcut to create rows
-fn row_shortcut(label: &gtk::Label, menu: &DropDown) -> gtk::Box {
-	
-	let row = box_shortcut(Orientation::Horizontal, 12);
-    row.append(label);
-	row.append(menu);
-	row
-
 }
 
 fn build_ui(app: &Application) {
@@ -49,7 +39,7 @@ fn build_ui(app: &Application) {
 	// Build an app window
 	let window = gtk::ApplicationWindow::new(app);
 	window.set_title(Some("easyDCTL"));
-	window.set_default_size(300, 70);
+	// window.set_default_size(100, 10);
 	
 	
 	// Create Labels for everything
@@ -86,44 +76,67 @@ fn build_ui(app: &Application) {
     // Create a button with label and margins
     let create_button = Button::builder()
         .label("Create DCTL!")
-        .margin_top(12)
+        .margin_top(5)
         .margin_bottom(12)
         .margin_start(12)
         .margin_end(12)
         .build();
 
-    // Connect to "clicked" signal of `button`
-    create_button.connect_clicked(|create_button| {
-        // Set the label to "Created!" after the button has been clicked on
-        create_button.set_label("Created!");
-    });
-
+	// create swap button
 	let swap_button = Button::builder()
-		.label("Swap")
+		.label("Swap (not working)")
         .margin_top(12)
         .margin_bottom(0)
         .margin_start(12)
         .margin_end(12)
         .build();
-        
-    // Set up box
-    let ics_row = row_shortcut(&ics_label, &ics_dropdown);
-    let ig_row = row_shortcut(&ig_label, &ig_dropdown);
-    let ocs_row = row_shortcut(&ocs_label, &ocs_dropdown);
-    let og_row = row_shortcut(&og_label, &og_dropdown);
+    
+    let label_column = box_shortcut(Orientation::Vertical, gtk::Align::Start, 27);
+    label_column.append(&ics_label);
+    label_column.append(&ig_label);
+    label_column.append(&ocs_label);
+    label_column.append(&og_label);
+    
+    let drop_column = box_shortcut(Orientation::Vertical, gtk::Align::End, 12);
+    drop_column.append(&ics_dropdown);
+    drop_column.append(&ig_dropdown);
+    drop_column.append(&ocs_dropdown);
+    drop_column.append(&og_dropdown); 
 
+	let rows_box = box_shortcut(Orientation::Horizontal, gtk::Align::Fill, 12);
+	rows_box.append(&label_column);
+	rows_box.append(&drop_column);
 
-	let gtk_box = box_shortcut(Orientation::Vertical, 12);
-	gtk_box.append(&ics_row);
-	gtk_box.append(&ig_row);
-	gtk_box.append(&ocs_row);
-	gtk_box.append(&og_row);
+	let gtk_box = box_shortcut(Orientation::Vertical, gtk::Align::Center, 12);
+	gtk_box.append(&rows_box);
 	gtk_box.append(&swap_button);
 	gtk_box.append(&create_button);
+	
 
     // add box to window
 	window.set_child(Some(&gtk_box));
 
     // Present window
     window.present();
+    
+    /* 
+
+	I HAVE NO IDEA HOW TO DO THIS
+
+    // give swap functionality to button
+    swap_button.connect_clicked(|ics_dropdown| {
+    	let in_color = ics_dropdown.selected();
+    	let out_color = ocs_dropdown.selected();
+    	ocs_dropdown.set_selected(in_color);
+    	ics_dropdown.set_selected(out_color);
+    });
+	*/
+	    
+    // Connect to "clicked" signal of `button`
+    create_button.connect_clicked(move |create_button| {
+        // Set the label to "Created!" after the button has been clicked on
+        create_button.set_label("Creating...");
+        println!("{:#?}", ics_dropdown.selected_item().unwrap());
+    });
+
 }
